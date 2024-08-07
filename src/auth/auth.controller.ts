@@ -4,12 +4,14 @@ import {
   Controller,
   HttpCode,
   Post,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpBodyDto } from './dtos/sign-up-body.dto';
 import { UserSerializer } from 'src/user/user.serializer';
 import { LoginDto } from './dtos/login.dto';
+import { Response } from 'express';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -18,7 +20,7 @@ export class AuthController {
 
   @HttpCode(201)
   @Post('sign_up')
-  async signUp(@Body() body: SignUpBodyDto) {
+  async signUp(@Body() body: SignUpBodyDto, @Res() res: Response) {
     const {
       email,
       username,
@@ -27,7 +29,7 @@ export class AuthController {
       password,
     } = body;
 
-    const user = await this.authService.signUp({
+    const { user, token } = await this.authService.signUp({
       email,
       username,
       firstName,
@@ -37,15 +39,15 @@ export class AuthController {
 
     const data = new UserSerializer(user);
 
-    return data;
+    return res.set('Authorization', `Bearer ${token}`).json(data);
   }
 
   @HttpCode(201)
   @Post('login')
-  async login(@Body() body: LoginDto) {
+  async login(@Body() body: LoginDto, @Res() res: Response) {
     const { email, username, password } = body;
 
-    const user = await this.authService.login({
+    const { user, token } = await this.authService.login({
       email,
       username,
       password,
@@ -53,6 +55,6 @@ export class AuthController {
 
     const data = new UserSerializer(user);
 
-    return data;
+    return res.set('Authorization', `Bearer ${token}`).json(data);
   }
 }
