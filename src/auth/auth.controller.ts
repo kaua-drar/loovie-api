@@ -12,8 +12,10 @@ import { SignUpBodyDto } from './dtos/sign-up-body.dto';
 import { UserSerializer } from 'src/user/user.serializer';
 import { LoginDto } from './dtos/login.dto';
 import { Response } from 'express';
+import { Public } from './decorators/auth.public.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
+@Public()
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
