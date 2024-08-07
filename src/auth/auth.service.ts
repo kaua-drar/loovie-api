@@ -4,12 +4,14 @@ import { SignUpDto } from './dtos/sign-up.dto';
 import { PasswordEncoderService } from 'src/security/password-encoder.service';
 import { User } from 'src/user/user.entity';
 import { LoginDto } from './dtos/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
     private passwordEncoderService: PasswordEncoderService,
+    private jwtService: JwtService,
   ) {}
 
   async signUp({ email, username, firstName, lastName, password }: SignUpDto) {
@@ -23,9 +25,14 @@ export class AuthService {
       password: encodedPassword,
     });
 
-    const user = this.usersRepository.create(newUser);
+    const user = await this.usersRepository.create(newUser);
 
-    return user;
+    const token = await this.generateToken(user);
+
+    return {
+      user,
+      token,
+    };
   }
 
   async login({ email, username, password }: LoginDto) {
@@ -40,9 +47,26 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid password');
       }
-      return user;
+
+      const token = await this.generateToken(user);
+
+      return {
+        user,
+        token,
+      };
     } catch (error) {
       throw new UnauthorizedException('User not found');
     }
+  }
+
+  private async generateToken(user: User) {
+    const payload = {
+      sub: user.id,
+      username: user.username,
+    };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return token;
   }
 }
