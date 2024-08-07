@@ -1,0 +1,35 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { User } from './user.entity';
+import { UsersRepository } from './users.repository';
+
+@Injectable()
+export class PrismaUsersRepository implements UsersRepository {
+  constructor(private prismaService: PrismaService) {}
+
+  async create({ email, username, firstName, lastName, password }: User) {
+    const user = await this.prismaService.user.create({
+      data: {
+        email,
+        username,
+        firstName,
+        lastName,
+        password,
+      },
+    });
+
+    return user;
+  }
+
+  async findBy(params: Partial<User>) {
+    const user = await this.prismaService.user.findFirstOrThrow({
+      where: {
+        OR: Object.entries(params).map(([key, value]) => ({
+          [key]: value,
+        })),
+      },
+    });
+
+    return user;
+  }
+}
