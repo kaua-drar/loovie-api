@@ -8,10 +8,10 @@ export class UserSerializer {
 
   email: string;
 
-  @Expose({ name: 'first_name' })
+  @Expose({ name: 'first_name', toPlainOnly: true })
   firstName?: string;
 
-  @Expose({ name: 'last_name' })
+  @Expose({ name: 'last_name', toPlainOnly: true })
   lastName?: string;
 
   @Expose({ name: 'full_name' })
@@ -19,10 +19,10 @@ export class UserSerializer {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @Expose({ name: 'created_at' })
+  @Expose({ name: 'created_at', toPlainOnly: true })
   createdAt: Date;
 
-  @Expose({ name: 'updated_at' })
+  @Expose({ name: 'updated_at', toPlainOnly: true })
   updatedAt: Date;
 
   @Exclude()

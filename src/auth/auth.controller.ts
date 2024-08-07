@@ -11,11 +11,10 @@ import { AuthService } from './auth.service';
 import { SignUpBodyDto } from './dtos/sign-up-body.dto';
 import { UserSerializer } from 'src/user/user.serializer';
 import { LoginDto } from './dtos/login.dto';
+import { instanceToPlain } from 'class-transformer';
 import { Response } from 'express';
-import { Public } from './decorators/auth.public.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Public()
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -39,7 +38,7 @@ export class AuthController {
       password,
     });
 
-    const data = new UserSerializer(user);
+    const data = instanceToPlain(new UserSerializer(user));
 
     return res.set('Authorization', `Bearer ${token}`).json(data);
   }
@@ -55,7 +54,7 @@ export class AuthController {
       password,
     });
 
-    const data = new UserSerializer(user);
+    const data = instanceToPlain(new UserSerializer(user));
 
     return res.set('Authorization', `Bearer ${token}`).json(data);
   }
