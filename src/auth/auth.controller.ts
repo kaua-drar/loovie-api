@@ -1,20 +1,13 @@
-import {
-  Body,
-  ClassSerializerInterceptor,
-  Controller,
-  HttpCode,
-  Post,
-  Res,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpBodyDto } from './dtos/sign-up-body.dto';
 import { UserSerializer } from 'src/user/user.serializer';
 import { LoginDto } from './dtos/login.dto';
 import { instanceToPlain } from 'class-transformer';
 import { Response } from 'express';
+import { Public } from './decorators/auth.public.decorator';
 
-@UseInterceptors(ClassSerializerInterceptor)
+@Public()
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
