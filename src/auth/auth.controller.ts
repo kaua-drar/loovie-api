@@ -33,7 +33,7 @@ export class AuthController {
 
     const data = instanceToPlain(new UserSerializer(user));
 
-    return res.set('Authorization', `Bearer ${token}`).json(data);
+    return res.set('Access-Token', token).json(data);
   }
 
   @HttpCode(201)
@@ -49,6 +49,6 @@ export class AuthController {
 
     const data = instanceToPlain(new UserSerializer(user));
 
-    return res.set('Authorization', `Bearer ${token}`).json(data);
+    return res.set('Access-Token', token).json(data);
   }
 }
