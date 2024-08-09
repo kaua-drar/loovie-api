@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { User } from './user.entity';
+import { User } from './user';
 
 export class UserSerializer {
   id: string;
