@@ -36,27 +36,29 @@ export class AuthService {
   }
 
   async login({ email, username, password }: LoginDto) {
+    let user: User;
+
     try {
-      const user = await this.usersRepository.findBy({ email, username });
-
-      const isPasswordValid = await this.passwordEncoderService.compare(
-        password,
-        user.password,
-      );
-
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid password');
-      }
-
-      const token = await this.generateToken(user);
-
-      return {
-        user,
-        token,
-      };
+      user = await this.usersRepository.findBy({ email, username });
     } catch (error) {
       throw new UnauthorizedException('User not found');
     }
+
+    const isPasswordValid = await this.passwordEncoderService.compare(
+      password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    const token = await this.generateToken(user);
+
+    return {
+      user,
+      token,
+    };
   }
 
   private async generateToken(user: User) {
