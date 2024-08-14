@@ -36,7 +36,7 @@ export class AuthController {
     return res.set('Access-Token', token).json(data);
   }
 
-  @HttpCode(201)
+  @HttpCode(200)
   @Post('login')
   async login(@Body() body: LoginDto, @Res() res: Response) {
     const { email, username, password } = body;
