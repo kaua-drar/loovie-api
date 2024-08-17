@@ -7,11 +7,11 @@ import { instanceToPlain } from 'class-transformer';
 import { Response } from 'express';
 import { Public } from './decorators/auth.public.decorator';
 
-@Public()
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @HttpCode(201)
   @Post('sign_up')
   async signUp(@Body() body: SignUpBodyDto, @Res() res: Response) {
@@ -36,7 +36,7 @@ export class AuthController {
     return res.set('Access-Token', token).json(data);
   }
 
-  @HttpCode(200)
+  @Public()
   @Post('login')
   async login(@Body() body: LoginDto, @Res() res: Response) {
     const { email, username, password } = body;
