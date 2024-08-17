@@ -1,4 +1,14 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpBodyDto } from './dtos/sign-up-body.dto';
 import { UserSerializer } from 'src/user/user.serializer';
@@ -6,6 +16,7 @@ import { LoginDto } from './dtos/login.dto';
 import { instanceToPlain } from 'class-transformer';
 import { Response } from 'express';
 import { Public } from './decorators/auth.public.decorator';
+import { AuthRequest } from './auth.request';
 
 @Controller()
 export class AuthController {
@@ -50,5 +61,13 @@ export class AuthController {
     const data = instanceToPlain(new UserSerializer(user));
 
     return res.set('Access-Token', token).json(data);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('me')
+  async me(@Req() req: AuthRequest) {
+    const { user } = req;
+
+    return new UserSerializer(user);
   }
 }
