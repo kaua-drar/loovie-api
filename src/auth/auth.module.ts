@@ -6,11 +6,7 @@ import { SecurityModule } from 'src/security/security.module';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
-import { ConfigService } from '@nestjs/config';
-
-const configService = new ConfigService();
-
-const jwtSecret = configService.get('JWT_SECRET');
+import { JwtConfigService } from 'src/security/jwt-config.service';
 
 @Module({
   controllers: [AuthController],
@@ -18,11 +14,7 @@ const jwtSecret = configService.get('JWT_SECRET');
   imports: [
     UsersModule,
     SecurityModule,
-    JwtModule.register({
-      global: true,
-      secret: jwtSecret,
-      signOptions: { expiresIn: '1d' },
-    }),
+    JwtModule.registerAsync(new JwtConfigService()),
   ],
 })
 export class AuthModule {}
