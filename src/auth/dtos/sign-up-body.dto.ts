@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class SignUpBodyDto {
   @IsNotEmpty()
@@ -8,9 +8,15 @@ export class SignUpBodyDto {
   @IsEmail()
   email: string;
 
-  first_name?: string;
+  @IsNotEmpty()
+  first_name: string;
 
-  last_name?: string;
+  @IsNotEmpty()
+  last_name: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  birth_date: string;
 
   @IsNotEmpty()
   password: string;

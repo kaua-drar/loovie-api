@@ -14,14 +14,24 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp({ email, username, firstName, lastName, password }: SignUpDto) {
+  async signUp({
+    email,
+    username,
+    firstName,
+    lastName,
+    birthDate,
+    password,
+  }: SignUpDto) {
     const encodedPassword = await this.passwordEncoderService.encode(password);
+
+    const parsedBirthDate = new Date(birthDate);
 
     const newUser = new User({
       email,
       username,
       firstName,
       lastName,
+      birthDate: parsedBirthDate,
       password: encodedPassword,
     });
 

@@ -31,6 +31,7 @@ export class AuthController {
       username,
       first_name: firstName,
       last_name: lastName,
+      birth_date: birthDate,
       password,
     } = body;
 
@@ -39,6 +40,7 @@ export class AuthController {
       username,
       firstName,
       lastName,
+      birthDate,
       password,
     });
 

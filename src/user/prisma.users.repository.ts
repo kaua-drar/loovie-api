@@ -7,12 +7,20 @@ import { UsersRepository } from './users.repository';
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async create({ email, username, firstName, lastName, password }: User) {
+  async create({
+    email,
+    username,
+    firstName,
+    lastName,
+    birthDate,
+    password,
+  }: User) {
     const user = await this.prismaService.user.create({
       data: {
         email,
         username,
         firstName,
+        birthDate,
         lastName,
         password,
       },
