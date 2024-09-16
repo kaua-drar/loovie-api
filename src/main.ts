@@ -7,6 +7,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(3000, '127.0.0.1');
+  await app.listen(8080, '127.0.0.1');
 }
 bootstrap();
