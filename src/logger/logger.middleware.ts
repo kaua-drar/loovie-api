@@ -1,97 +1,53 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    // Getting the request log
-    console.log(`Request:`, {
-      headers: req.headers,
-      body: req.body,
-      originalUrl: req.originalUrl,
+  private logger: Logger = new Logger('NestApplication');
+
+  use(request: Request, response: Response, next: NextFunction): void {
+    const { method, query: queryParams, baseUrl: path } = request;
+
+    // logging request
+    setImmediate(async () => {
+      const requestLog = {
+        method,
+        path,
+        queryParams,
+        body: request.body,
+      };
+      this.logger.debug(`Request: ${JSON.stringify(requestLog)}`);
     });
 
-    // Getting the response log
-    getResponseLog(res);
-
-    if (next) {
-      next();
-    }
-  }
-}
-
-const getResponseLog = (res: Response) => {
-  const rawResponse = res.write;
-  const rawResponseEnd = res.end;
-
-  const chunkBuffers = [];
-
-  // New chunk passed in as Buffer each time write() is called by stream
-  // Take chunks as a rest parameter since it is an array. This allows applying Array methods directly (ref MDN)
-  // res.write below is in object mode for write to avoid needing encoding arg (https://nodejs.org/api/stream.html#writable_writevchunks-callback)
-  // console.log(`Beginning res.write`);
-  res.write = (...chunks) => {
-    const resArgs = [];
-    for (let i = 0; i < chunks.length; i++) {
-      resArgs[i] = chunks[i];
-
-      // This handling comes in when buffer is full, hence rawResponse === false after rawResponse.apply() below
-      // Ref: Example under https://nodejs.org/api/stream.html#class-streamwritable
-      // Callback (res.write) resumes write stream
-      if (!resArgs[i]) {
-        res.once('drain', res.write);
-
-        // Resume from last falsy iteration
-        --i;
+    // extracting response's body
+    let body = {};
+    const chunks = [];
+    const oldEnd = response.end;
+    response.end = (chunk) => {
+      if (chunk) {
+        chunks.push(Buffer.from(chunk));
       }
-    }
-
-    // Copy buffer to new buffer instance then push into chunks[]
-    // resArgs[0] contains the response body
-    if (resArgs[0]) {
-      chunkBuffers.push(Buffer.from(resArgs[0]));
-    }
-
-    // res.write shuold return true if the internal buffer is less than the default highWaterMark. If false is returned, further attempts to write data to the stream should stop until the 'drain' event is emitted.
-    // The apply() method accepts two arguments (Ref: https://www.javascripttutorial.net/javascript-apply-method/):
-    // thisArg (res) is the value of 'this' provided for function rawResponse
-    // The args argument (restArgs) is an array that specifies the arguments of the function rawResponse
-    return rawResponse.apply(res, resArgs);
-  };
-
-  // console.log(`chunks: `, Buffer.from(chunkBuffers).toJSON());
-
-  // console.log(`Done writing, beginning res.end`);
-  res.end = (...chunk) => {
-    const resArgs = [];
-    for (let i = 0; i < chunk.length; i++) {
-      resArgs[i] = chunk[i];
-    }
-
-    // Copy buffer to new buffer instance then push into chunks[]
-    // resArgs[0] contains the response body
-    if (resArgs[0]) {
-      chunkBuffers.push(Buffer.from(resArgs[0]));
-    }
-
-    // Encode buffer as utf8 JSON string
-    const body = Buffer.concat(chunkBuffers).toString('utf8');
-
-    const responseLog = {
-      response: {
-        statusCode: res.statusCode,
-        body: JSON.parse(body) || body || {},
-        // Returns a shallow copy of the current outgoing headers
-        headers: res.getHeaders(),
-      },
+      body = Buffer.concat(chunks).toString('utf8');
+      return oldEnd.call(response, body);
     };
 
-    console.log('Response: ', responseLog);
+    // logging response
+    response.on('finish', async () => {
+      return setTimeout(() => {
+        const responseLog = {
+          method,
+          path,
+          statusCode: response.statusCode,
+          body,
+        };
+        if (response.statusCode >= 400) {
+          this.logger.error(`Response: ${JSON.stringify(responseLog)}`);
+        } else {
+          this.logger.log(`Response: ${JSON.stringify(responseLog)}`);
+        }
+      }, 0);
+    });
 
-    // res.end() is satisfied after passing in restArgs as params
-    // Doing so creates 'end' event to indicate that the entire body has been received.
-    // Otherwise, the stream will continue forever (ref: https://nodejs.org/api/stream.html#event-end_1)
-    rawResponseEnd.apply(res, resArgs);
-    return responseLog as unknown as Response;
-  };
-};
+    next();
+  }
+}
