@@ -1,0 +1,8 @@
+import "media"
+import "season"
+
+model Show extends Media {
+  posterUrl   String?  @map("poster_url")
+  backdropUrl String?  @map("backdrop_url")
+  seasons     Season[]
+}

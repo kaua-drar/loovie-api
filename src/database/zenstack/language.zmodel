@@ -1,0 +1,13 @@
+import "base"
+import "media_translation"
+import "season_translation"
+import "genre_translation"
+import "sub_genre_translation"
+
+model Language extends Base {
+  name                 String
+  mediaTranslations    MediaTranslation[]
+  seasonTranslations   SeasonTranslation[]
+  genreTranslations    GenreTranslation[]
+  subGenreTranslations SubGenreTranslation[]
+}

@@ -1,0 +1,11 @@
+import "base"
+import "language"
+import "genre"
+
+model GenreTranslation extends Base {
+  name       String
+  languageId String   @unique @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+  genreId    String   @unique @map("genre_id")
+  genre      Genre    @relation(fields: [genreId], references: [id])
+}

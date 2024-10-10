@@ -1,14 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { User } from './user';
-import { UsersRepository } from './users.repository';
-import { ENHANCED_PRISMA } from '@zenstackhq/server/nestjs';
+import { AuthRepository } from 'src/auth/auth.repository';
+import { User } from 'src/user/user';
 
 @Injectable()
-export class PrismaUsersRepository implements UsersRepository {
-  constructor(
-    @Inject(ENHANCED_PRISMA) private readonly prismaService: PrismaService,
-  ) {}
+export class PrismaAuthRepository implements AuthRepository {
+  constructor(private prismaService: PrismaService) {}
 
   async create({
     email,
@@ -42,11 +39,5 @@ export class PrismaUsersRepository implements UsersRepository {
     });
 
     return user;
-  }
-
-  async findAll() {
-    const users = await this.prismaService.user.findMany();
-
-    return users;
   }
 }

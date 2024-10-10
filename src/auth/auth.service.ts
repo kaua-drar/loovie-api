@@ -1,15 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersRepository } from 'src/user/users.repository';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignUpDto } from './dtos/sign-up.dto';
-import { PasswordEncoderService } from 'src/security/password-encoder.service';
 import { User } from 'src/user/user';
 import { LoginDto } from './dtos/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { PasswordEncoderService } from 'src/security/password-encoder.service';
+import { AuthRepository } from './auth.repository';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersRepository: UsersRepository,
+    private authRepository: AuthRepository,
     private passwordEncoderService: PasswordEncoderService,
     private jwtService: JwtService,
   ) {}
@@ -19,37 +24,48 @@ export class AuthService {
     username,
     firstName,
     lastName,
-    birthDate,
+    birthday,
     password,
   }: SignUpDto) {
     const encodedPassword = await this.passwordEncoderService.encode(password);
-
-    const parsedBirthDate = new Date(birthDate);
+    const parsedBirthday = new Date(birthday);
 
     const newUser = new User({
       email,
       username,
       firstName,
       lastName,
-      birthDate: parsedBirthDate,
+      birthday: parsedBirthday,
       password: encodedPassword,
     });
 
-    const user = await this.usersRepository.create(newUser);
+    try {
+      const user = await this.authRepository.create(newUser);
+      const token = await this.generateToken(user);
 
-    const token = await this.generateToken(user);
+      return {
+        user,
+        token,
+      };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          `The ${error.meta.target[0]} is already taken.`,
+        );
+      }
 
-    return {
-      user,
-      token,
-    };
+      throw error;
+    }
   }
 
   async login({ email, username, password }: LoginDto) {
     let user: User;
 
     try {
-      user = await this.usersRepository.findBy({ email, username });
+      user = await this.authRepository.findBy({ email, username });
     } catch (error) {
       throw new UnauthorizedException('User not found');
     }

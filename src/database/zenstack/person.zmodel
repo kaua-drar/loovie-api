@@ -1,0 +1,30 @@
+import "base"
+import "media_cast"
+
+enum MainProfession {
+  ACTOR
+  DIRECTOR
+  WRITER
+  PRODUCER
+  COMPOSER
+  EDITOR
+  CINEMATOGRAPHER
+  COSTUME_DESIGNER
+  PRODUCTION_DESIGNER
+  ART_DIRECTOR
+  MAKEUP_ARTIST
+  SOUND
+  VISUAL_EFFECTS
+  SPECIAL_EFFECTS
+  CASTING
+}
+
+model Person extends Base {
+  name              String
+  mainProfession    MainProfession? @map("main_profession")
+  birthday          DateTime?
+  deathday          DateTime?
+  bio               String?
+  profilePictureUrl String?         @map("profile_picture_url")
+  medias            MediaCast[]
+}

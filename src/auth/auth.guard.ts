@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from './decorators/auth.public.decorator';
 import { Reflector } from '@nestjs/core';
-import { UsersRepository } from 'src/user/users.repository';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -16,7 +15,6 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
-    private usersRepository: UsersRepository,
     private configService: ConfigService,
   ) {}
 
@@ -40,7 +38,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret,
       });
-      request['user'] = await this.usersRepository.findBy({ id: payload.sub });
+      request['userId'] = payload.sub;
     } catch {
       throw new UnauthorizedException('Invalid token');
     }

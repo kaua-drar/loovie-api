@@ -16,7 +16,7 @@ export class SignUpDto {
 
   @IsNotEmpty()
   @IsDateString()
-  birthDate: string;
+  birthday: string;
 
   @IsNotEmpty()
   password: string;

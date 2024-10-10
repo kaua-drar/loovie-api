@@ -1,0 +1,37 @@
+import "base"
+import "company"
+import "episode"
+import "genre_translation"
+import "genre"
+import "language"
+import "media_cast"
+import "media_genre"
+import "media_translation"
+import "media_type"
+import "media"
+import "movie"
+import "person"
+import "role"
+import "season_translation"
+import "season"
+import "show"
+import "sub_genre_genre"
+import "sub_genre_translation"
+import "sub_genre"
+import "unidentified_base"
+import "user"
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}

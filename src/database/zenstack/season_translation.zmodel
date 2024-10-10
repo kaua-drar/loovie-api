@@ -1,0 +1,11 @@
+import "base"
+import "language"
+import "season"
+
+model SeasonTranslation extends Base {
+  overview   String?
+  language   Language @relation(fields: [languageId], references: [id])
+  languageId String   @map("language_id")
+  season     Season   @relation(fields: [seasonId], references: [id])
+  seasonId   String   @map("season_id")
+}

@@ -1,0 +1,12 @@
+import "unidentified_base"
+import "media"
+import "sub_genre"
+
+model MediaSubGenre extends UnidentifiedBase {
+  media      Media    @relation(fields: [mediaId], references: [id])
+  mediaId    String   @map("media_id")
+  subGenre   SubGenre @relation(fields: [subGenreId], references: [id])
+  subGenreId String   @map("subGenre_id")
+
+  @@id([mediaId, subGenreId])
+}

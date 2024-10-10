@@ -1,0 +1,12 @@
+import "unidentified_base"
+import "media"
+import "person"
+
+model MediaCast extends UnidentifiedBase {
+  media     Media    @relation(fields: [mediaId], references: [id])
+  mediaId   String   @map("media_id")
+  person    Person   @relation(fields: [personId], references: [id])
+  personId  String   @map("person_id")
+
+  @@id([mediaId, personId])
+}

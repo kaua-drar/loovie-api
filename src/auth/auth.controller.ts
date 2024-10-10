@@ -31,7 +31,7 @@ export class AuthController {
       username,
       first_name: firstName,
       last_name: lastName,
-      birth_date: birthDate,
+      birthday,
       password,
     } = body;
 
@@ -40,7 +40,7 @@ export class AuthController {
       username,
       firstName,
       lastName,
-      birthDate,
+      birthday,
       password,
     });
 
@@ -60,7 +60,9 @@ export class AuthController {
       password,
     });
 
-    const data = instanceToPlain(new UserSerializer(user));
+    const data = instanceToPlain(new UserSerializer(user), {
+      // excludeExtraneousValues: true,
+    });
 
     return res.set('Access-Token', token).json(data);
   }

@@ -1,0 +1,7 @@
+import "base"
+
+model Company extends Base {
+  name          String
+  logoUrl       String? @map("logo_url")
+  originCountry String  @map("origin_country")
+}

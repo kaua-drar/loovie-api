@@ -1,0 +1,11 @@
+import "base"
+import "season"
+
+model Episode extends Base {
+  number   Int
+  duration Int
+  stillUrl String?  @map("still_url")
+  airedAt  DateTime @map("aired_at")
+  season   Season   @relation(fields: [seasonId], references: [id])
+  seasonId String   @map("season_id")
+}

@@ -1,0 +1,14 @@
+import "base"
+import "show"
+import "episode"
+import "season_translation"
+
+model Season extends Base {
+  number       Int
+  posterUrl    String?             @map("poster_url")
+  backdropUrl  String?             @map("backdrop_url")
+  show         Show                @relation(fields: [showId], references: [id])
+  showId       String              @map("show_id")
+  episodes     Episode[]
+  translations SeasonTranslation[]
+}

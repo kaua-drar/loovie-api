@@ -1,0 +1,13 @@
+import "base"
+import "sub_genre_genre"
+import "media_genre"
+import "genre_translation"
+
+model Genre extends Base {
+  name              String
+  subGenres         SubGenreGenre[]
+  medias            MediaGenre[]
+  genreTranslations GenreTranslation[]
+
+  @@unique([name])
+}

@@ -4,7 +4,7 @@ export class User {
   email: string;
   firstName: string;
   lastName: string;
-  birthDate: Date;
+  birthday: Date;
   password: string;
   createdAt: Date;
   updatedAt: Date;
@@ -12,7 +12,7 @@ export class User {
   constructor(
     attributes?: Pick<
       User,
-      'email' | 'username' | 'firstName' | 'lastName' | 'birthDate' | 'password'
+      'email' | 'username' | 'firstName' | 'lastName' | 'birthday' | 'password'
     >,
   ) {
     Object.assign(this, attributes);

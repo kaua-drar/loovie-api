@@ -1,0 +1,12 @@
+import "base"
+import "language"
+import "media"
+
+model MediaTranslation extends Base {
+  title      String
+  overview   String?
+  language   Language @relation(fields: [languageId], references: [id])
+  languageId String   @map("language_id")
+  media      Media    @relation(fields: [mediaId], references: [id])
+  mediaId    String   @map("media_id")
+}
