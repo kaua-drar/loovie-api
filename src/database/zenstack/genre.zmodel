@@ -4,10 +4,8 @@ import "media_genre"
 import "genre_translation"
 
 model Genre extends Base {
-  name              String
+  tmdbId            Int?                @map("tmdb_id") @unique
   subGenres         SubGenreGenre[]
   medias            MediaGenre[]
   genreTranslations GenreTranslation[]
-
-  @@unique([name])
 }

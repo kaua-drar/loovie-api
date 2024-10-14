@@ -4,10 +4,7 @@ import "media_sub_genre"
 import "sub_genre_translation"
 
 model SubGenre extends Base {
-  name         String
   genres       SubGenreGenre[]
   medias       MediaSubGenre[]
   translations SubGenreTranslation[]
-
-  @@unique([name])
 }

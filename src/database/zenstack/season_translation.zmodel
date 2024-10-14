@@ -1,11 +1,14 @@
-import "base"
+import "unidentified_base"
 import "language"
 import "season"
 
-model SeasonTranslation extends Base {
+model SeasonTranslation extends UnidentifiedBase {
   overview   String?
-  language   Language @relation(fields: [languageId], references: [id])
-  languageId String   @map("language_id")
-  season     Season   @relation(fields: [seasonId], references: [id])
+  language   Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  languageCode String   @map("language_code")
+  season     Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   seasonId   String   @map("season_id")
+
+  @@id([seasonId, languageCode])
+
 }

@@ -25,6 +25,6 @@ model Person extends Base {
   birthday          DateTime?
   deathday          DateTime?
   bio               String?
-  profilePictureUrl String?         @map("profile_picture_url")
+  profilePicturePath String?         @map("profile_picture_path")
   medias            MediaCast[]
 }

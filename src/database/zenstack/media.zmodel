@@ -6,9 +6,9 @@ import "media_cast"
 import "media_type"
 
 model Media extends Base {
-  tmdbId           Int                @map("tmdb_id")
+  tmdbId           String               @map("tmdb_id") @unique
   originalTitle    String
-  originalLanguage String             @map("original_language")
+  originalLanguage String               @map("original_language")
   genres           MediaGenre[]
   subGenres        MediaSubGenre[]
   translations     MediaTranslation[]

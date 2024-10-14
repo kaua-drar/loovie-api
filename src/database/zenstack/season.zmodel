@@ -5,9 +5,9 @@ import "season_translation"
 
 model Season extends Base {
   number       Int
-  posterUrl    String?             @map("poster_url")
-  backdropUrl  String?             @map("backdrop_url")
-  show         Show                @relation(fields: [showId], references: [id])
+  posterPath    String?             @map("poster_path")
+  backdropPath  String?             @map("backdrop_path")
+  show         Show                @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId       String              @map("show_id")
   episodes     Episode[]
   translations SeasonTranslation[]

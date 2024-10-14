@@ -2,6 +2,6 @@ import "base"
 
 model Company extends Base {
   name          String
-  logoUrl       String? @map("logo_url")
+  logoPath       String? @map("logo_path")
   originCountry String  @map("origin_country")
 }

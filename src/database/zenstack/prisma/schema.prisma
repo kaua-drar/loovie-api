@@ -41,18 +41,18 @@ enum MediaType {
   Episode
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Company {
   id            String   @id() @default(uuid())
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt() @map("updated_at")
   name          String
-  logoUrl       String?  @map("logo_url")
+  logoPath      String?  @map("logo_path")
   originCountry String   @map("origin_country")
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Episode {
   id        String   @id() @default(uuid())
@@ -60,45 +60,45 @@ model Episode {
   updatedAt DateTime @updatedAt() @map("updated_at")
   number    Int
   duration  Int
-  stillUrl  String?  @map("still_url")
+  stillPath String?  @map("still_path")
   airedAt   DateTime @map("aired_at")
-  season    Season   @relation(fields: [seasonId], references: [id])
+  season    Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   seasonId  String   @map("season_id")
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Season {
   id           String              @id() @default(uuid())
   createdAt    DateTime            @default(now()) @map("created_at")
   updatedAt    DateTime            @updatedAt() @map("updated_at")
   number       Int
-  posterUrl    String?             @map("poster_url")
-  backdropUrl  String?             @map("backdrop_url")
-  show         Show                @relation(fields: [showId], references: [id])
+  posterPath   String?             @map("poster_path")
+  backdropPath String?             @map("backdrop_path")
+  show         Show                @relation(fields: [showId], references: [id], onDelete: Cascade)
   showId       String              @map("show_id")
   episodes     Episode[]
   translations SeasonTranslation[]
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Show {
   id                 String   @id() @default(uuid())
-  posterUrl          String?  @map("poster_url")
-  backdropUrl        String?  @map("backdrop_url")
+  posterPath         String?  @map("poster_path")
+  backdropPath       String?  @map("backdrop_path")
   seasons            Season[]
   delegate_aux_media Media    @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 /// @@delegate(mediaType)
 model Media {
   id                 String             @id() @default(uuid())
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt() @map("updated_at")
-  tmdbId             Int                @map("tmdb_id")
+  tmdbId             String             @unique() @map("tmdb_id")
   originalTitle      String
   originalLanguage   String             @map("original_language")
   genres             MediaGenre[]
@@ -110,198 +110,196 @@ model Media {
   delegate_aux_movie Movie?
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model MediaGenre {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt() @map("updated_at")
-  media     Media    @relation(fields: [mediaId], references: [id])
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
   mediaId   String   @map("media_id")
-  genre     Genre    @relation(fields: [genreId], references: [id])
+  genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
   genreId   String   @map("genre_id")
 
   @@id([mediaId, genreId])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Genre {
   id                String             @id() @default(uuid())
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt() @map("updated_at")
-  name              String
+  tmdbId            Int?               @unique() @map("tmdb_id")
   subGenres         SubGenreGenre[]
   medias            MediaGenre[]
   genreTranslations GenreTranslation[]
-
-  @@unique([name])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model SubGenreGenre {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt() @map("updated_at")
-  genre      Genre    @relation(fields: [genreId], references: [id])
+  genre      Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
   genreId    String   @map("genre_id")
-  subGenre   SubGenre @relation(fields: [subGenreId], references: [id])
+  subGenre   SubGenre @relation(fields: [subGenreId], references: [id], onDelete: Cascade)
   subGenreId String   @map("subGenre_id")
 
   @@id([genreId, subGenreId])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model SubGenre {
   id           String                @id() @default(uuid())
   createdAt    DateTime              @default(now()) @map("created_at")
   updatedAt    DateTime              @updatedAt() @map("updated_at")
-  name         String
   genres       SubGenreGenre[]
   medias       MediaSubGenre[]
   translations SubGenreTranslation[]
-
-  @@unique([name])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model MediaSubGenre {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt() @map("updated_at")
-  media      Media    @relation(fields: [mediaId], references: [id])
+  media      Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
   mediaId    String   @map("media_id")
-  subGenre   SubGenre @relation(fields: [subGenreId], references: [id])
+  subGenre   SubGenre @relation(fields: [subGenreId], references: [id], onDelete: Cascade)
   subGenreId String   @map("subGenre_id")
 
   @@id([mediaId, subGenreId])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model SubGenreTranslation {
-  id         String   @id() @default(uuid())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt() @map("updated_at")
-  name       String
-  languageId String   @unique() @map("language_id")
-  language   Language @relation(fields: [languageId], references: [id])
-  subGenreId String   @unique() @map("sub_genre_id")
-  subGenre   SubGenre @relation(fields: [subGenreId], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt() @map("updated_at")
+  name         String
+  languageCode String   @map("language_code")
+  language     Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  subGenreId   String   @map("sub_genre_id")
+  subGenre     SubGenre @relation(fields: [subGenreId], references: [id], onDelete: Cascade)
+
+  @@id([subGenreId, languageCode])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Language {
-  id                   String                @id() @default(uuid())
   createdAt            DateTime              @default(now()) @map("created_at")
   updatedAt            DateTime              @updatedAt() @map("updated_at")
-  name                 String
+  code                 String                @id()
+  name                 String?
   mediaTranslations    MediaTranslation[]
   seasonTranslations   SeasonTranslation[]
   genreTranslations    GenreTranslation[]
   subGenreTranslations SubGenreTranslation[]
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model MediaTranslation {
-  id         String   @id() @default(uuid())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt() @map("updated_at")
-  title      String
-  overview   String?
-  language   Language @relation(fields: [languageId], references: [id])
-  languageId String   @map("language_id")
-  media      Media    @relation(fields: [mediaId], references: [id])
-  mediaId    String   @map("media_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt() @map("updated_at")
+  title        String
+  overview     String?
+  language     Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  languageCode String   @map("language_code")
+  media        Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  mediaId      String   @map("media_id")
+
+  @@id([mediaId, languageCode])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model SeasonTranslation {
-  id         String   @id() @default(uuid())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt() @map("updated_at")
-  overview   String?
-  language   Language @relation(fields: [languageId], references: [id])
-  languageId String   @map("language_id")
-  season     Season   @relation(fields: [seasonId], references: [id])
-  seasonId   String   @map("season_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt() @map("updated_at")
+  overview     String?
+  language     Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  languageCode String   @map("language_code")
+  season       Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonId     String   @map("season_id")
+
+  @@id([seasonId, languageCode])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model GenreTranslation {
-  id         String   @id() @default(uuid())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt() @map("updated_at")
-  name       String
-  languageId String   @unique() @map("language_id")
-  language   Language @relation(fields: [languageId], references: [id])
-  genreId    String   @unique() @map("genre_id")
-  genre      Genre    @relation(fields: [genreId], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt() @map("updated_at")
+  name         String
+  languageCode String   @map("language_code")
+  language     Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  genreId      String   @map("genre_id")
+  genre        Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([genreId, languageCode])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model MediaCast {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt() @map("updated_at")
-  media     Media    @relation(fields: [mediaId], references: [id])
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
   mediaId   String   @map("media_id")
-  person    Person   @relation(fields: [personId], references: [id])
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
   personId  String   @map("person_id")
 
   @@id([mediaId, personId])
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Person {
-  id                String          @id() @default(uuid())
-  createdAt         DateTime        @default(now()) @map("created_at")
-  updatedAt         DateTime        @updatedAt() @map("updated_at")
-  name              String
-  mainProfession    MainProfession? @map("main_profession")
-  birthday          DateTime?
-  deathday          DateTime?
-  bio               String?
-  profilePictureUrl String?         @map("profile_picture_url")
-  medias            MediaCast[]
+  id                 String          @id() @default(uuid())
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt() @map("updated_at")
+  name               String
+  mainProfession     MainProfession? @map("main_profession")
+  birthday           DateTime?
+  deathday           DateTime?
+  bio                String?
+  profilePicturePath String?         @map("profile_picture_path")
+  medias             MediaCast[]
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 model Movie {
-  id                 String   @id() @default(uuid())
-  releaseDate        DateTime @map("release_date")
-  duration           Int
-  posterUrl          String?  @map("poster_url")
-  backdropUrl        String?  @map("backdrop_url")
-  delegate_aux_media Media    @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                 String    @id() @default(uuid())
+  releaseDate        DateTime? @map("release_date")
+  duration           Int?
+  posterPath         String?   @map("poster_path")
+  backdropPath       String?   @map("backdrop_path")
+  delegate_aux_media Media     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('create,update', auth().role == ADMIN)
 /// @@allow('read', true)
 /// @@allow('create,read', true)
-/// @@allow('all', auth() == this)
+/// @@allow('all', auth().id == this.id)
 model User {
-  id                String   @id() @default(uuid())
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt() @map("updated_at")
+  id                 String   @id() @default(uuid())
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt() @map("updated_at")
   /// @email
-  email             String   @unique()
-  username          String   @unique()
-  firstName         String   @map("first_name")
-  lastName          String   @map("last_name")
-  birthday          DateTime
-  bio               String?
+  email              String   @unique()
+  username           String   @unique()
+  firstName          String   @map("first_name")
+  lastName           String   @map("last_name")
+  birthday           DateTime
+  bio                String?
   /// @omit
   /// @password
-  password          String
-  profilePictureUrl String?  @map("profile_picture_url")
-  /// @omit
+  password           String
+  profilePicturePath String?  @map("profile_picture_path")
   /// @allow('update', auth().role == ADMIN)
-  role              Role     @default(USER)
+  role               Role     @default(USER)
 }

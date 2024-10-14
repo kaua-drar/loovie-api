@@ -3,9 +3,9 @@ import "media"
 import "person"
 
 model MediaCast extends UnidentifiedBase {
-  media     Media    @relation(fields: [mediaId], references: [id])
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
   mediaId   String   @map("media_id")
-  person    Person   @relation(fields: [personId], references: [id])
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
   personId  String   @map("person_id")
 
   @@id([mediaId, personId])

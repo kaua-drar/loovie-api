@@ -9,8 +9,8 @@ model User extends Base {
   birthday          DateTime
   bio               String?
   password          String   @omit @password
-  profilePictureUrl String?  @map("profile_picture_url")
-  role              Role     @default(USER) @omit @allow("update", auth().role == ADMIN)
+  profilePicturePath String?  @map("profile_picture_path")
+  role              Role     @default(USER) @allow("update", auth().role == ADMIN)
 
   @@allow("create,read", true)
   @@allow("all", auth().id == this.id)

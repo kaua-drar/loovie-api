@@ -3,9 +3,9 @@ import "genre"
 import "sub_genre"
 
 model SubGenreGenre extends UnidentifiedBase {
-  genre      Genre    @relation(fields: [genreId], references: [id])
+  genre      Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
   genreId    String   @map("genre_id")
-  subGenre   SubGenre @relation(fields: [subGenreId], references: [id])
+  subGenre   SubGenre @relation(fields: [subGenreId], references: [id], onDelete: Cascade)
   subGenreId String   @map("subGenre_id")
 
   @@id([genreId, subGenreId])
