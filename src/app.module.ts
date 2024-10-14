@@ -16,6 +16,7 @@ import { TranslationsModule } from './translations/translations.module';
 import { GenresModule } from './genre/genres.module';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TypesenseModule } from './search/typesense.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       global: true,
       module: PrismaModule,
     },
+    TypesenseModule,
     UsersModule,
     AuthModule,
     SecurityModule,
