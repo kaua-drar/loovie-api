@@ -60,9 +60,7 @@ export class AuthController {
       password,
     });
 
-    const data = instanceToPlain(new UserSerializer(user), {
-      // excludeExtraneousValues: true,
-    });
+    const data = instanceToPlain(new UserSerializer(user));
 
     return res.set('Access-Token', token).json(data);
   }

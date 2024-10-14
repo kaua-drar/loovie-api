@@ -16,12 +16,14 @@ export class AuthInterceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest();
-    const userId = request.userId;
+    const userId = request.user_id;
 
     if (userId) {
       const user = await this.prismaService.user.findUnique({
         where: { id: userId },
       });
+
+      request.user = user;
 
       this.clsService.set('auth', user);
     }
