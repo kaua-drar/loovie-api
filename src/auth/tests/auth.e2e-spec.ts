@@ -47,8 +47,8 @@ describe('Auth (e2e)', () => {
       const payload = {
         email: 'janedoe@example.com',
         username: 'janedoe',
-        first_name: 'Jane',
-        last_name: 'Doe',
+        firstName: 'Jane',
+        lastName: 'Doe',
         password: 'password',
       };
       return request(app.getHttpServer())
@@ -61,11 +61,11 @@ describe('Auth (e2e)', () => {
             id: expect.any(String),
             email: payload.email,
             username: payload.username,
-            first_name: payload.first_name,
-            last_name: payload.last_name,
-            full_name: `${payload.first_name} ${payload.last_name}`,
-            created_at: expect.any(String),
-            updated_at: expect.any(String),
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            fullName: `${payload.firstName} ${payload.lastName}`,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
           });
         });
     });
@@ -89,11 +89,11 @@ describe('Auth (e2e)', () => {
             id: expect.any(String),
             email: payload.email,
             username: payload.username,
-            first_name: payload.firstName,
-            last_name: payload.lastName,
-            full_name: `${payload.firstName} ${payload.lastName}`,
-            created_at: expect.any(String),
-            updated_at: expect.any(String),
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            fullName: `${payload.firstName} ${payload.lastName}`,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
           });
         });
     });
@@ -111,11 +111,11 @@ describe('Auth (e2e)', () => {
             id: expect.any(String),
             email: payload.email,
             username: payload.username,
-            first_name: payload.firstName,
-            last_name: payload.lastName,
-            full_name: `${payload.firstName} ${payload.lastName}`,
-            created_at: expect.any(String),
-            updated_at: expect.any(String),
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            fullName: `${payload.firstName} ${payload.lastName}`,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
           });
         });
     });

@@ -16,7 +16,7 @@ export class AuthInterceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest();
-    const userId = request.user_id;
+    const userId = request.userId;
 
     if (userId) {
       const user = await this.prismaService.user.findUnique({

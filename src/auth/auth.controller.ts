@@ -26,14 +26,7 @@ export class AuthController {
   @HttpCode(201)
   @Post('sign_up')
   async signUp(@Body() body: SignUpBodyDto, @Res() res: Response) {
-    const {
-      email,
-      username,
-      first_name: firstName,
-      last_name: lastName,
-      birthday,
-      password,
-    } = body;
+    const { email, username, firstName, lastName, birthday, password } = body;
 
     const { user, token } = await this.authService.signUp({
       email,

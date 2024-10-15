@@ -9,10 +9,10 @@ export class SignUpBodyDto {
   email: string;
 
   @IsNotEmpty()
-  first_name: string;
+  firstName: string;
 
   @IsNotEmpty()
-  last_name: string;
+  lastName: string;
 
   @IsNotEmpty()
   @IsDateString()

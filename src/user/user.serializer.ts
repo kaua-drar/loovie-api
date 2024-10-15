@@ -11,10 +11,10 @@ export class UserSerializer {
   @Expose({ name: 'email', toPlainOnly: true })
   email: string;
 
-  @Expose({ name: 'first_name', toPlainOnly: true })
+  @Expose({ name: 'firstName', toPlainOnly: true })
   firstName?: string;
 
-  @Expose({ name: 'last_name', toPlainOnly: true })
+  @Expose({ name: 'lastName', toPlainOnly: true })
   lastName?: string;
 
   @Expose({ name: 'birthday', toPlainOnly: true })
@@ -26,15 +26,15 @@ export class UserSerializer {
   @Expose({ name: 'profilePictureUrl', toPlainOnly: true })
   profilePictureUrl: string;
 
-  @Expose({ name: 'full_name' })
+  @Expose({ name: 'fullName' })
   getFullName() {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @Expose({ name: 'created_at', toPlainOnly: true })
+  @Expose({ name: 'createdAt', toPlainOnly: true })
   createdAt: Date;
 
-  @Expose({ name: 'updated_at', toPlainOnly: true })
+  @Expose({ name: 'updatedAt', toPlainOnly: true })
   updatedAt: Date;
 
   @Exclude()
