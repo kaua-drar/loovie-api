@@ -1,20 +1,24 @@
-import { MediaTranslation } from './../translations/media-translation';
+import { ProductionTranslation } from '../translations/production-translation';
 import { ConfigService } from '@nestjs/config';
 import { TdmbMovie } from './tmdb-movie';
 import { LanguagesRepository } from 'src/language/languages.repository';
 import { MoviesRepository } from 'src/movie/movies.repository';
 import { Movie } from 'src/movie/movie';
-import { MediaTranslationsRepository } from 'src/translations/media-translations.repository';
+import { ProductionTranslationsRepository } from 'src/translations/production-translations.repository';
 import { GenreTranslationsRepository } from 'src/translations/genre-translations.repository';
 import { GenreTranslation } from 'src/translations/genre-translation';
 import { GenresRepository } from 'src/genre/genres.repository';
 import axios, { AxiosInstance } from 'axios';
 import { TmdbGenre } from './tmdb-genre';
 import { Genre } from 'src/genre/genre';
-import { MediaGenresRepository } from 'src/genre/media-genres.repository';
-import { MediaGenre } from 'src/genre/media-genre';
+import { TitleGenresRepository } from 'src/genre/title-genres.repository';
+import { TitleGenre } from 'src/genre/title-genre';
 import { DiscoverResponse } from './tmdb-discover';
 import { Injectable } from '@nestjs/common';
+import { MoviesSearch } from 'src/movie/movies.search';
+import { MovieTranslationsSearch } from 'src/translations/movie-translation.search';
+import { GenresSearch } from 'src/genre/genres.search';
+import { GenreTranslationsSearch } from 'src/translations/genre-translation.search';
 
 @Injectable()
 export class TmdbService {
@@ -27,9 +31,13 @@ export class TmdbService {
     private readonly languagesRepository: LanguagesRepository,
     private readonly genresRepository: GenresRepository,
     private readonly moviesRepository: MoviesRepository,
-    private readonly mediaTranslationsRepository: MediaTranslationsRepository,
+    private readonly productionTranslationsRepository: ProductionTranslationsRepository,
     private readonly genreTranslationsRepository: GenreTranslationsRepository,
-    private readonly mediaGenresRepository: MediaGenresRepository,
+    private readonly titleGenresRepository: TitleGenresRepository,
+    private readonly moviesSearch: MoviesSearch,
+    private readonly movieTranslationsSearch: MovieTranslationsSearch,
+    private readonly genresSearch: GenresSearch,
+    private readonly genreTranslationsSearch: GenreTranslationsSearch,
   ) {
     this.apiEndpoint = 'https://api.themoviedb.org/3';
     this.apiKey = this.configService.get('TMDB_API_KEY');
@@ -53,8 +61,10 @@ export class TmdbService {
     );
 
     for (const tmdbMovie of tmdbMovies) {
+      const tmdbId = `Movie-${tmdbMovie.id}`;
+
       const movieAlreadyExists = await this.moviesRepository.exists({
-        tmdbId: `Movie-${tmdbMovie.id}`,
+        tmdbId,
       });
 
       if (movieAlreadyExists) {
@@ -62,24 +72,32 @@ export class TmdbService {
       }
 
       const newMovie = new Movie({
-        tmdbId: `Movie-${tmdbMovie.id}`,
-        originalTitle: tmdbMovie.original_title,
+        tmdbId,
+        originalName: tmdbMovie.original_title,
         originalLanguage: tmdbMovie.original_language,
-        posterPath: tmdbMovie.poster_path,
         backdropPath: tmdbMovie.backdrop_path,
         releaseDate: new Date(tmdbMovie.release_date),
+        voteAverage: tmdbMovie.vote_average,
+        voteCount: tmdbMovie.vote_count,
+        adult: tmdbMovie.adult,
+        popularity: tmdbMovie.popularity,
       });
 
       const movie = await this.moviesRepository.create(newMovie);
 
-      const newTranslation = new MediaTranslation({
+      await this.moviesSearch.index(movie);
+
+      const newTranslation = new ProductionTranslation({
         languageCode: language.code,
-        mediaId: movie.id,
+        productionId: movie.id,
+        posterPath: tmdbMovie.poster_path,
         overview: tmdbMovie.overview,
-        title: tmdbMovie.title,
+        name: tmdbMovie.title,
       });
 
-      await this.mediaTranslationsRepository.create(newTranslation);
+      const productionTranslation =
+        await this.productionTranslationsRepository.create(newTranslation);
+      await this.movieTranslationsSearch.index(productionTranslation);
 
       const genreIds = tmdbMovie.genre_ids;
 
@@ -92,12 +110,12 @@ export class TmdbService {
           continue;
         }
 
-        const newMediaGenre = new MediaGenre({
+        const newTitleGenre = new TitleGenre({
           genreId: genre.id,
-          mediaId: movie.id,
+          titleId: movie.id,
         });
 
-        await this.mediaGenresRepository.create(newMediaGenre);
+        await this.titleGenresRepository.create(newTitleGenre);
       }
     }
   }
@@ -136,6 +154,7 @@ export class TmdbService {
       });
 
       const genre = await this.genresRepository.create(newGenre);
+      await this.genresSearch.index(genre);
 
       const newGenreTranslation = new GenreTranslation({
         genreId: genre.id,
@@ -143,7 +162,9 @@ export class TmdbService {
         name: tmdbGenre.name,
       });
 
-      await this.genreTranslationsRepository.create(newGenreTranslation);
+      const genreTranslation =
+        await this.genreTranslationsRepository.create(newGenreTranslation);
+      await this.genreTranslationsSearch.index(genreTranslation);
     }
   }
 }

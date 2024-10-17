@@ -31,4 +31,11 @@ export class PrismaGenreTranslationsRepository
 
     return genreTranslation;
   }
+
+  async findAll(): Promise<GenreTranslation[]> {
+    const genreTranslations =
+      await this.prismaService.genreTranslation.findMany();
+
+    return genreTranslations;
+  }
 }

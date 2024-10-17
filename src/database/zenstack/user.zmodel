@@ -2,15 +2,15 @@ import "base"
 import "role"
 
 model User extends Base {
-  email             String   @unique @email
-  username          String   @unique
-  firstName         String   @map("first_name")
-  lastName          String   @map("last_name")
-  birthday          DateTime
-  bio               String?
-  password          String   @omit @password
-  profilePicturePath String?  @map("profile_picture_path")
-  role              Role     @default(USER) @allow("update", auth().role == ADMIN)
+  email               String   @unique @email
+  username            String   @unique
+  firstName           String   @map("first_name")
+  lastName            String   @map("last_name")
+  birthday            DateTime
+  bio                 String?
+  password            String   @omit @password
+  profilePicturePath  String?  @map("profile_picture_path")
+  role                Role     @default(USER) @allow("update", auth().role == ADMIN)
 
   @@allow("create,read", true)
   @@allow("all", auth().id == this.id)

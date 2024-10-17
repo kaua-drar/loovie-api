@@ -1,18 +1,21 @@
 export class Movie {
   id: string;
   tmdbId: string;
-  originalTitle: string;
+  originalName: string;
   originalLanguage: string;
   releaseDate?: Date;
-  posterPath: string;
   backdropPath: string;
   duration?: number;
+  voteAverage: number;
+  voteCount: number;
+  adult: boolean;
+  popularity: number;
   createdAt: Date;
   updatedAt: Date;
-  mediaType: 'Movie' | 'Show' | 'Episode';
+  titleType: 'Movie' | 'Show';
 
   constructor(
-    attributes?: Omit<Movie, 'createdAt' | 'updatedAt' | 'id' | 'mediaType'>,
+    attributes?: Omit<Movie, 'createdAt' | 'updatedAt' | 'id' | 'titleType'>,
   ) {
     Object.assign(this, attributes);
   }

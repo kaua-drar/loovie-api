@@ -1,11 +1,11 @@
 import "base"
-import "sub_genre_genre"
-import "media_genre"
+import "sub_genre"
+import "title_genre"
 import "genre_translation"
 
 model Genre extends Base {
   tmdbId            Int?                @map("tmdb_id") @unique
-  subGenres         SubGenreGenre[]
-  medias            MediaGenre[]
+  subGenres         SubGenre[]          @relation("SubGenreGenre")
+  titles            TitleGenre[]
   genreTranslations GenreTranslation[]
 }

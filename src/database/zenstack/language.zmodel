@@ -1,14 +1,14 @@
-import "unidentified_base"
-import "media_translation"
+import "base"
+import "production_translation"
 import "season_translation"
 import "genre_translation"
 import "sub_genre_translation"
 
-model Language extends UnidentifiedBase {
-  code                 String                 @id 
-  name                 String?
-  mediaTranslations    MediaTranslation[]
-  seasonTranslations   SeasonTranslation[]
-  genreTranslations    GenreTranslation[]
-  subGenreTranslations SubGenreTranslation[]
+model Language extends Base {
+  code                    String                  @unique() 
+  name                    String?
+  productionTranslations  ProductionTranslation[]
+  seasonTranslations      SeasonTranslation[]
+  genreTranslations       GenreTranslation[]
+  subGenreTranslations    SubGenreTranslation[]
 }

@@ -1,0 +1,13 @@
+import "base"
+import "person"
+import "production_team"
+
+model ProductionMember extends Base {
+  role              String
+  person            Person          @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId          String          @map("person_id")
+  productionTeam    ProductionTeam  @relation(fields: [productionTeamId], references: [id], onDelete: Cascade)
+  productionTeamId  String          @map("production_team_id")
+
+  @@unique([productionTeamId, personId])
+}

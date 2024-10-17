@@ -54,4 +54,10 @@ export class PrismaGenresRepository implements GenresRepository {
 
     return !!genre;
   }
+
+  async findAll(): Promise<Genre[]> {
+    const genres = await this.prismaService.genre.findMany();
+
+    return genres;
+  }
 }

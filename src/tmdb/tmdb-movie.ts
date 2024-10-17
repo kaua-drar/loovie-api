@@ -9,4 +9,7 @@ export interface TdmbMovie {
   poster_path: string;
   backdrop_path: string;
   genre_ids: number[];
+  vote_average: number;
+  vote_count: number;
+  adult: boolean;
 }

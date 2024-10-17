@@ -1,0 +1,11 @@
+import "base"
+import "production"
+import "production_member"
+
+model ProductionTeam extends Base {
+  castProductionId  String                @map("cast_production_id") @unique
+  castProduction    Production            @relation("Cast", fields: [castProductionId], references: [id], onDelete: Cascade)
+  crewProductionId  String                @map("crew_production_id") @unique
+  crewProduction    Production            @relation("Crew", fields: [crewProductionId], references: [id], onDelete: Cascade)
+  members           ProductionMember[]
+}

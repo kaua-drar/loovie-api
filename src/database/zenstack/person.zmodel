@@ -1,5 +1,5 @@
 import "base"
-import "media_cast"
+import "production_member"
 
 enum MainProfession {
   ACTOR
@@ -20,11 +20,11 @@ enum MainProfession {
 }
 
 model Person extends Base {
-  name              String
-  mainProfession    MainProfession? @map("main_profession")
-  birthday          DateTime?
-  deathday          DateTime?
-  bio               String?
-  profilePicturePath String?         @map("profile_picture_path")
-  medias            MediaCast[]
+  name                String
+  mainProfession      MainProfession?     @map("main_profession")
+  birthday            DateTime?
+  deathday            DateTime?
+  bio                 String?
+  profilePicturePath  String?             @map("profile_picture_path")
+  productionMembers   ProductionMember[]
 }

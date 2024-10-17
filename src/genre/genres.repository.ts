@@ -8,4 +8,6 @@ export abstract class GenresRepository {
   abstract findOrCreate(params: Pick<Genre, 'tmdbId'>): Promise<Genre>;
 
   abstract exists(params: Partial<Genre>): Promise<boolean>;
+
+  abstract findAll(): Promise<Genre[]>;
 }

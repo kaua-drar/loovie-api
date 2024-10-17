@@ -1,13 +1,13 @@
-import "unidentified_base"
+import "base"
 import "language"
 import "genre"
 
-model GenreTranslation extends UnidentifiedBase {
-  name          String
-  languageCode  String   @map("language_code")
-  language      Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
-  genreId       String   @map("genre_id")
-  genre         Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
+model GenreTranslation extends Base {
+  name            String
+  languageCode    String   @map("language_code")
+  language        Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  genreId         String   @map("genre_id")
+  genre           Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
-  @@id([genreId, languageCode])
+  @@unique([genreId, languageCode])
 }

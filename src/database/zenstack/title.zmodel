@@ -1,0 +1,15 @@
+import "production"
+import "title_genre"
+import "title_sub_genre"
+import "title_type"
+
+model Title extends Production {
+  backdropPath      String?             @map("backdrop_path")
+  popularity        Float?
+  adult             Boolean
+  genres            TitleGenre[]
+  subGenres         TitleSubGenre[]
+  titleType         TitleType
+
+  @@delegate(titleType)
+}

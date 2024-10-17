@@ -1,0 +1,19 @@
+import "base"
+import "production_translation"
+import "production_team"
+import "production_type"
+
+model Production extends Base {
+  tmdbId            String                    @map("tmdb_id") @unique
+  originalName      String                    @map("original_name")
+  originalLanguage  String                    @map("original_language")
+  releaseDate       DateTime?                 @map("release_date")
+  voteAverage       Float?                    @map("vote_average")
+  voteCount         Int?                      @map("vote_count")
+  translations      ProductionTranslation[]
+  cast              ProductionTeam?           @relation("Cast")
+  crew              ProductionTeam?           @relation("Crew")
+  productionType    ProductionType
+
+  @@delegate(productionType)
+}

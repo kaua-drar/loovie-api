@@ -20,7 +20,7 @@ export class LoggerMiddleware implements NestMiddleware {
     });
 
     // extracting response's body
-    let body;
+    let body = {};
     const chunks = [];
     const oldEnd = response.end;
     response.end = (chunk) => {
@@ -38,7 +38,7 @@ export class LoggerMiddleware implements NestMiddleware {
           method,
           path,
           statusCode: response.statusCode,
-          body: JSON.parse(body),
+          body,
         };
         if (response.statusCode >= 400) {
           this.logger.error(`Response: ${JSON.stringify(responseLog)}`);

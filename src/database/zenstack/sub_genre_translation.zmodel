@@ -1,14 +1,14 @@
-import "unidentified_base"
+import "base"
 import "language"
 import "sub_genre"
 
-model SubGenreTranslation extends UnidentifiedBase {
-  name       String
-  languageCode String @map("language_code")
-  language   Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
-  subGenreId String   @map("sub_genre_id")
-  subGenre   SubGenre @relation(fields: [subGenreId], references: [id], onDelete: Cascade)
+model SubGenreTranslation extends Base {
+  name          String
+  languageCode  String   @map("language_code")
+  language      Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  subGenreId    String   @map("sub_genre_id")
+  subGenre      SubGenre @relation(fields: [subGenreId], references: [id], onDelete: Cascade)
 
-  @@id([subGenreId, languageCode])
+  @@unique([subGenreId, languageCode])
 
 }

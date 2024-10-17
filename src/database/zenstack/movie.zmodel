@@ -1,8 +1,5 @@
-import "media"
+import "title"
 
-model Movie extends Media {
-  releaseDate DateTime? @map("release_date")
-  duration    Int?
-  posterPath   String?   @map("poster_path")
-  backdropPath String?   @map("backdrop_path")
+model Movie extends Title {
+  duration      Int?
 }

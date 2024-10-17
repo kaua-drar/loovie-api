@@ -1,5 +1,0 @@
-enum MediaType {
-  Movie
-  Show
-  Episode
-}

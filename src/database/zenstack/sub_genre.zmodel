@@ -1,10 +1,10 @@
 import "base"
-import "sub_genre_genre"
-import "media_sub_genre"
+import "genre"
+import "title_sub_genre"
 import "sub_genre_translation"
 
 model SubGenre extends Base {
-  genres       SubGenreGenre[]
-  medias       MediaSubGenre[]
+  genres       Genre[]             @relation("SubGenreGenre")
+  titles       TitleSubGenre[]
   translations SubGenreTranslation[]
 }

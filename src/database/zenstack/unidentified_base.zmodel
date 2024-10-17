@@ -1,9 +1,0 @@
-import "role"
-
-abstract model UnidentifiedBase {
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@allow("create,update", auth().role == ADMIN)
-  @@allow("read", true)
-}

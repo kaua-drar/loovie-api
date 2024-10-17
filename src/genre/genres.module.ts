@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GenresRepository } from './genres.repository';
 import { PrismaGenresRepository } from './prisma.genres.repository';
-import { MediaGenresRepository } from './media-genres.repository';
-import { PrismaMediaGenresRepository } from './prisma.media-genres.repository';
+import { TitleGenresRepository } from './title-genres.repository';
+import { PrismaTitleGenresRepository } from './prisma.title-genres.repository';
 import { GenresController } from './genres.controller';
+import { GenresSearch } from './genres.search';
+import { TypesenseGenresSearch } from './typesense.genres.search';
 
 @Module({
   controllers: [GenresController],
@@ -13,10 +15,14 @@ import { GenresController } from './genres.controller';
       useClass: PrismaGenresRepository,
     },
     {
-      provide: MediaGenresRepository,
-      useClass: PrismaMediaGenresRepository,
+      provide: TitleGenresRepository,
+      useClass: PrismaTitleGenresRepository,
+    },
+    {
+      provide: GenresSearch,
+      useClass: TypesenseGenresSearch,
     },
   ],
-  exports: [GenresRepository, MediaGenresRepository],
+  exports: [GenresRepository, TitleGenresRepository, GenresSearch],
 })
 export class GenresModule {}

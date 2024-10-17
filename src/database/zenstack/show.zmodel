@@ -1,8 +1,6 @@
-import "media"
+import "title"
 import "season"
 
-model Show extends Media {
-  posterPath   String?  @map("poster_path")
-  backdropPath String?  @map("backdrop_path")
+model Show extends Title {
   seasons     Season[]
 }

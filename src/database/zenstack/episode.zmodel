@@ -1,11 +1,10 @@
-import "base"
+import "production"
 import "season"
 
-model Episode extends Base {
-  number   Int
-  duration Int
-  stillPath String?  @map("still_path")
-  airedAt  DateTime @map("aired_at")
-  season   Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  seasonId String   @map("season_id")
+model Episode extends Production {
+  number        Int
+  duration      Int
+  stillPath     String?               @map("still_path")
+  season        Season                @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonId      String                @map("season_id")
 }

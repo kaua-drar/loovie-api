@@ -1,0 +1,13 @@
+import "base"
+import "language"
+import "production"
+
+model ProductionTranslation extends Base {
+  name          String
+  overview      String?
+  posterPath    String?     @map("poster_path")
+  language      Language    @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+  languageCode  String      @map("language_code")
+  production    Production  @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  productionId  String      @map("production_id")
+}

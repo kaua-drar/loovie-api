@@ -14,9 +14,12 @@ export class PrismaMoviesRepository implements MoviesRepository {
     duration,
     backdropPath,
     originalLanguage,
-    originalTitle,
-    posterPath,
+    originalName,
     releaseDate,
+    adult,
+    popularity,
+    voteAverage,
+    voteCount,
   }: Movie) {
     const movie = await this.prismaService.movie.create({
       data: {
@@ -24,9 +27,12 @@ export class PrismaMoviesRepository implements MoviesRepository {
         duration,
         backdropPath,
         originalLanguage,
-        originalTitle,
-        posterPath,
+        originalName,
         releaseDate,
+        adult,
+        popularity,
+        voteAverage,
+        voteCount,
       },
     });
 
@@ -55,5 +61,11 @@ export class PrismaMoviesRepository implements MoviesRepository {
     });
 
     return !!movie;
+  }
+
+  async findAll(): Promise<Movie[]> {
+    const movies = await this.prismaService.movie.findMany();
+
+    return movies;
   }
 }
