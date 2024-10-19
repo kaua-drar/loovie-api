@@ -2,11 +2,15 @@ import { GenreTranslationsRepository } from 'src/translations/genre-translations
 import { TypesenseService } from 'src/search/typesense.service';
 import { GenreTranslation } from './genre-translation';
 import { Injectable } from '@nestjs/common';
-import { TypesenseBaseSearch } from 'src/search/typsense.base.search';
+import { TypesenseBaseSearch } from 'src/search/typesense.base.search';
 import { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections';
+import { GenreTranslationDocument } from './genre-translation.document';
 
 @Injectable()
-export class TypesenseGenreTranslationsSearch extends TypesenseBaseSearch<GenreTranslation> {
+export class TypesenseGenreTranslationsSearch extends TypesenseBaseSearch<
+  GenreTranslation,
+  GenreTranslationDocument
+> {
   collection = 'genre_translations';
   schema: Omit<CollectionCreateSchema, 'name'> = {
     fields: [

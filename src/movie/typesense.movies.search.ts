@@ -2,11 +2,15 @@ import { TypesenseService } from 'src/search/typesense.service';
 import { Movie } from './movie';
 import { Injectable } from '@nestjs/common';
 import { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections';
-import { TypesenseBaseSearch } from 'src/search/typsense.base.search';
+import { TypesenseBaseSearch } from 'src/search/typesense.base.search';
 import { MoviesRepository } from './movies.repository';
+import { MovieDocument } from './movie.document';
 
 @Injectable()
-export class TypesenseMoviesSearch extends TypesenseBaseSearch<Movie> {
+export class TypesenseMoviesSearch extends TypesenseBaseSearch<
+  Movie,
+  MovieDocument
+> {
   collection = 'movies';
   schema: Omit<CollectionCreateSchema, 'name'> = {
     fields: [
@@ -26,7 +30,6 @@ export class TypesenseMoviesSearch extends TypesenseBaseSearch<Movie> {
         name: 'releaseDate',
         type: 'int64',
         optional: true,
-        sort: true,
       },
       {
         name: 'backdropPath',

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PrismaProductionTranslationsRepository } from './prisma.production-translations.repository';
 import { ProductionTranslationsRepository } from './production-translations.repository';
 import { GenreTranslationsRepository } from './genre-translations.repository';
@@ -7,6 +7,7 @@ import { MovieTranslationsSearch } from './movie-translation.search';
 import { TypesenseMovieTranslationsSearch } from './typesense.movie-translation.search';
 import { GenreTranslationsSearch } from './genre-translation.search';
 import { TypesenseGenreTranslationsSearch } from './typesense.genre-translation.search';
+import { MoviesModule } from 'src/movie/movies.module';
 
 @Module({
   providers: [
@@ -27,6 +28,7 @@ import { TypesenseGenreTranslationsSearch } from './typesense.genre-translation.
       useClass: TypesenseGenreTranslationsSearch,
     },
   ],
+  imports: [forwardRef(() => MoviesModule)],
   exports: [
     ProductionTranslationsRepository,
     GenreTranslationsRepository,

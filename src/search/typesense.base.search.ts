@@ -3,9 +3,11 @@ import { BaseSearch } from './base.search';
 import { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections';
 import { TypesenseService } from './typesense.service';
 import { OnModuleInit } from '@nestjs/common';
+import { BaseSearchResponse } from './base.search-response';
+import { BaseSearchParams } from './base.search-params';
 
-export class TypesenseBaseSearch<T extends object>
-  implements BaseSearch<T>, OnModuleInit
+export class TypesenseBaseSearch<T extends object, Document extends object>
+  implements BaseSearch<T, Document>, OnModuleInit
 {
   collection: string;
   rawCollection?: string;
@@ -74,15 +76,53 @@ export class TypesenseBaseSearch<T extends object>
 
     await this.createCollection(date);
 
-    const genreTranslations = await this.repository.findAll();
-
-    for (const genreTranslation of genreTranslations) {
-      await this.index(genreTranslation, date);
-    }
+    await this.indexAll(date);
 
     await this.upsertAlias(date);
     await this.typesenseService.collections(this.rawCollection).delete();
 
     this.rawCollection = this.getCollectionByDate(date);
+  }
+
+  async indexAll(date: string) {
+    const items = await this.repository.findAll();
+
+    for (const item of items) {
+      await this.index(item, date);
+    }
+  }
+
+  async search({
+    query,
+    queryBy,
+    perPage,
+    page,
+    sortBy,
+    sortDirection,
+    filterBy,
+    includeFields,
+    excludeFields,
+  }: BaseSearchParams): Promise<BaseSearchResponse<Document>> {
+    const search = await this.typesenseService
+      .collections(this.rawCollection)
+      .documents()
+      .search({
+        q: query,
+        query_by: queryBy,
+        per_page: perPage,
+        page,
+        sort_by: sortBy
+          ? `${sortBy}:${sortDirection?.trim()?.length ? sortDirection : 'desc'}`
+          : undefined,
+        filter_by: filterBy,
+        include_fields: includeFields,
+        exclude_fields: excludeFields,
+      });
+
+    return {
+      page: search.page,
+      perPage: search.request_params.per_page,
+      results: search.hits.map((hit) => hit.document) as Document[],
+    };
   }
 }

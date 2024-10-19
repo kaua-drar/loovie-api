@@ -1,4 +1,8 @@
 import { BaseSearch } from 'src/search/base.search';
-import { ProductionTranslation } from './production-translation';
+import { ProductionTranslationDocument } from './production-translation.document';
+import { ProductionTranslationIndexDto } from './dtos/production-translation.index.dto';
 
-export abstract class MovieTranslationsSearch extends BaseSearch<ProductionTranslation> {}
+export abstract class MovieTranslationsSearch extends BaseSearch<
+  ProductionTranslationIndexDto,
+  ProductionTranslationDocument & { movieId: string }
+> {}

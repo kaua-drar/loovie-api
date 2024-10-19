@@ -97,7 +97,13 @@ export class TmdbService {
 
       const productionTranslation =
         await this.productionTranslationsRepository.create(newTranslation);
-      await this.movieTranslationsSearch.index(productionTranslation);
+      await this.movieTranslationsSearch.index({
+        ...productionTranslation,
+        releaseDate: new Date(tmdbMovie.release_date),
+        voteAverage: tmdbMovie.vote_average,
+        voteCount: tmdbMovie.vote_count,
+        popularity: tmdbMovie.popularity,
+      });
 
       const genreIds = tmdbMovie.genre_ids;
 

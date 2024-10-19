@@ -1,12 +1,17 @@
 import { TypesenseService } from 'src/search/typesense.service';
-import { ProductionTranslation } from './production-translation';
 import { Injectable } from '@nestjs/common';
-import { TypesenseBaseSearch } from 'src/search/typsense.base.search';
+import { TypesenseBaseSearch } from 'src/search/typesense.base.search';
 import { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections';
 import { ProductionTranslationsRepository } from './production-translations.repository';
+import { ProductionTranslationDocument } from './production-translation.document';
+import { ProductionTranslationIndexDto } from './dtos/production-translation.index.dto';
+import { MoviesRepository } from 'src/movie/movies.repository';
 
 @Injectable()
-export class TypesenseMovieTranslationsSearch extends TypesenseBaseSearch<ProductionTranslation> {
+export class TypesenseMovieTranslationsSearch extends TypesenseBaseSearch<
+  ProductionTranslationIndexDto,
+  ProductionTranslationDocument & { movieId: string }
+> {
   collection = 'movie_translations';
   schema: Omit<CollectionCreateSchema, 'name'> = {
     fields: [
@@ -41,14 +46,39 @@ export class TypesenseMovieTranslationsSearch extends TypesenseBaseSearch<Produc
         name: 'updatedAt',
         type: 'int64',
       },
+      // The following fields are only necessary for sorting purposes
+      {
+        name: 'releaseDate',
+        type: 'int64',
+        optional: true,
+      },
+      {
+        name: 'voteAverage',
+        type: 'float',
+        optional: true,
+      },
+      {
+        name: 'voteCount',
+        type: 'int64',
+        optional: true,
+      },
+      {
+        name: 'popularity',
+        type: 'float',
+        optional: true,
+      },
     ],
   };
+  moviesRepository: MoviesRepository;
 
   constructor(
     typesenseService: TypesenseService,
     repository: ProductionTranslationsRepository,
+    moviesRepository: MoviesRepository,
   ) {
     super(typesenseService, repository);
+
+    this.moviesRepository = moviesRepository;
   }
 
   async index(
@@ -61,7 +91,11 @@ export class TypesenseMovieTranslationsSearch extends TypesenseBaseSearch<Produc
       posterPath,
       createdAt,
       updatedAt,
-    }: ProductionTranslation,
+      releaseDate,
+      popularity,
+      voteAverage,
+      voteCount,
+    }: ProductionTranslationIndexDto,
     date?: string,
   ) {
     await this.typesenseService
@@ -76,6 +110,31 @@ export class TypesenseMovieTranslationsSearch extends TypesenseBaseSearch<Produc
         posterPath,
         createdAt: createdAt.getTime(),
         updatedAt: updatedAt.getTime(),
+        releaseDate: releaseDate?.getTime(),
+        popularity,
+        voteAverage,
+        voteCount,
       });
+  }
+
+  async indexAll(date: string) {
+    const items = await this.repository.findAll();
+
+    for (const item of items) {
+      const movie = await this.moviesRepository.findBy({
+        id: item.productionId,
+      });
+
+      await this.index(
+        {
+          ...item,
+          releaseDate: movie.releaseDate,
+          voteAverage: movie.voteAverage,
+          voteCount: movie.voteCount,
+          popularity: movie.popularity,
+        },
+        date,
+      );
+    }
   }
 }
